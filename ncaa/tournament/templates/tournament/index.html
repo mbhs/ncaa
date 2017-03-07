@@ -1,0 +1,28 @@
+{% extends "tournament/base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<br /><br /><br /><br />
+<h2> Welcome Team {{username}}</h2><br /><br /><br />
+<h2>Update Coefficients Here:</h2>
+
+<table>
+<tr>
+  <th>Variable Name</th>
+  <th>Coefficient</th>
+</tr>
+{% for variable in variables %}
+<tr>
+  <td><a href = "{%url 'tournament:update_coefficient' variable.pk %}">{{variable.name}} </a></td>
+  <td>{{variable.coefficient}}</td>
+</tr>
+{%endfor%}
+</table>
+<br /><br /><br />
+<ul>
+  <li><a href = "{%url 'tournament:all_probs' %}" target="_blank">Simulate All Matchups, Nicely Formatted</a></li>
+  <li><a href = "{%url 'tournament:all_probs_Kaggle' %}" target="_blank">Simulate All Matchups, Formatted for Kaggle</a></li>
+  <li><a href = "{%url 'tournament:tournament_probs' %}">Simulate Tournament</a></li>
+  <li><a href = "{%url 'tournament:read_in_values' %}">Update Data File</a></li>
+  <li><a href = "{%url 'tournament:logout_view' %}">Logout</a></li>
+</ul>
+{%endblock%}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Login to NCAA Simulation</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+  <!--Google Font - Work Sans-->
+  <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,300,700' rel='stylesheet' type='text/css'>
+
+  <div class="container">
+          {{message}}
+    <div class="profile">
+      <button class="profile__avatar" id="toggleProfile">
+        <img src="http://mrdannynavarro.com/sites/default/files/misc/GRIFFIN_EX-sm.png" alt="Avatar" />
+      </button>
+      <br />
+
+
+      <br />
+      <form action = "{%url 'tournament:login' %}" method="POST">
+        {%csrf_token%}
+      <div class="profile__form">
+        <div class="profile__fields">
+          <div class="field">
+            <input type="text" id="username" name = "username" class="input" required pattern=.*\S.* />
+            <label for="username" class="label">Username</label>
+          </div>
+          <div class="field">
+            <input type="password" id="password" name = "password" class="input" required pattern=.*\S.* />
+            <label for="password" class="label">Password</label>
+          </div>
+          <div class="profile__footer">
+            <input type = "submit" value = "Login">
+          </div>
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
+
+  <script src="/static/js/index.js"></script>
+
+</body>
+</html>

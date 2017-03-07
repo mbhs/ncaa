@@ -1,0 +1,46 @@
+{% extends "tournament/base.html" %}
+{% block title %}Upload Data{% endblock %}
+{% block content %}
+<br />
+<h2>Upload your data as a csv file. </h2>
+  <h3>The format is as follows:</h3>
+
+<table>
+  <tr>
+    <th> </th>
+    <th>Variable 1</th>
+    <th>Variable 2</th>
+    <th>...</th>
+    <th>Variable N</th>
+  </tr>
+  <tr>
+    <td>Team 1</td>
+    <td>Variable 1 Value for Team 1</td>
+    <td>Variable 2 Value for Team 1</td>
+    <td>...</td>
+    <td>Variable N Value for Team 1</td>
+  </tr>
+  <tr>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+  </tr>
+  <tr>
+    <td>Team N</td>
+    <td>Variable 1 Value for Team N</td>
+    <td>Variable 2 Value for Team N</td>
+    <td>...</td>
+    <td>Variable N Value for Team N</td>
+  </tr>
+</table>
+<h3>
+<form enctype="multipart/form-data" action="{% url 'tournament:read_in_values' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+    <br />
+</form>
+</h3>
+{%endblock%}

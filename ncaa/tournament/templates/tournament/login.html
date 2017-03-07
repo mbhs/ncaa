@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Login to NCAA Simulation</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+  body {
+    position: relative;
+    margin: 0;
+    font-family: 'Work Sans', Arial, Helvetica, sans-serif;
+    min-height: 100%;
+    background: linear-gradient(to bottom, #68EACC 0%, #497BE8 100%);
+    color: #777;
+  }
+  </style>
+</head>
+
+<body>
+
+  <!--Google Font - Work Sans-->
+  <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,300,700' rel='stylesheet' type='text/css'>
+
+  <div class="container">
+          {{message}}
+    <div class="profile">
+      <button class="profile__avatar" id="toggleProfile">
+        <img src="http://mrdannynavarro.com/sites/default/files/misc/GRIFFIN_EX-sm.png" alt="Avatar" />
+      </button>
+      <br />
+
+
+      <br />
+      <form action = "{%url 'tournament:login' %}" method="POST">
+        {%csrf_token%}
+      <div class="profile__form">
+        <div class="profile__fields">
+          <div class="field">
+            <input type="text" id="username" name = "username" class="input" required pattern=.*\S.* />
+            <label for="username" class="label">Username</label>
+          </div>
+          <div class="field">
+            <input type="password" id="password" name = "password" class="input" required pattern=.*\S.* />
+            <label for="password" class="label">Password</label>
+          </div>
+          <div class="profile__footer">
+            <input type = "submit" value = "Login">
+          </div>
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
+
+  <script src="/static/js/index.js"></script>
+
+</body>
+</html>

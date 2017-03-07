@@ -1,0 +1,36 @@
+{% extends "tournament/base.html" %}
+{% block title %}Tournament Simulation{% endblock %}
+{% block content %}
+<br />
+<h2>Upload your data as a csv. </h2>
+<h3>The data should look as follows:</h3>
+
+<table>
+  <tr>
+    <th>The Number of Teams Left (Must be a power of 2)</th>
+  </tr>
+  <tr>
+    <td>East/Midwest Team Names (Exactly as it was in your data file, in the order in which they are listed in the bracket)</td>
+  </tr>
+  <tr>
+    <td>...</td>
+  </tr>
+  <tr>
+    <td>South/West Team Names (Exactly as it was in your data file, in the order in which they are listed in the bracket)</td>
+  </tr>
+  <tr>
+    <td>...</td>
+  </tr>
+</table>
+<br />
+{{message}}
+<br />
+    <h3>
+<form enctype="multipart/form-data" action="." method="post" target="_blank">
+    {% csrf_token %}
+    {{ form.as_p }}
+<input type="submit" value="Submit" />
+    <br />
+</form>
+</h3>
+{%endblock%}

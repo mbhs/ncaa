@@ -1,0 +1,14 @@
+
+<html>
+<head>
+    <title>{%block title%}{%endblock%}</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+
+</head>
+<body>
+    {%block content%}{%endblock%}
+    <br />
+
+    <a href="{%url 'tournament:index'%}" class="myButton">Return to Homepage</a>
+</body>
+</html>
