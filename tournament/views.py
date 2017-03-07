@@ -65,12 +65,30 @@ def read_in_values(request):
                 for i in range(1, len(team_row)):
                     Entry.objects.create(team = t, variable = variable_list[i-1], value = team_row[i])
 
+            #Standardize Differences
+
+            for variable in variable_list:
+                differences = []
+                entries_query = variable.entry_set.all()
+                entries = []
+                for entry in entries_query:
+                    entries.append(entry.value)
+
+                for i in range(0, len(entries)):
+                    for j in range(0, len(entries)):
+                        if j <= i:
+                            continue
+                        differences.append(entries[i]-entries[j])
+                variable.stdev = numpy.std(differences)
+                variable.save()
+
             return HttpResponseRedirect(reverse('tournament:index'))
 
     else:
         form = UploadForm()
     return render(request, 'tournament/upload_csv.html', {'form': form, })
 
+@login_required
 def update_coefficient(request, variable_id):
     variable = get_object_or_404(Variable, pk = variable_id)
     if request.method == 'POST':
@@ -92,20 +110,20 @@ def all_probs_Kaggle(request):
         teams.append(team)
 
     variables_query = Variable.objects.all().order_by('name')
-    coefficients = []
-    for var in variables:
-        coefficients.append(var.coefficient)
+    variables = []
+    for var in variables_query:
+        variables.append(var)
 
     output = []
     for i in range(0, len(teams)):
         team1 = teams[i]
         for j in range(i+1, len(teams)):
             team2 = teams[j]
-            p = sim_matchup(team1, team2, coefficients)
+            p = sim_matchup(team1, team2, variables)
             team1id = 1100+i
             team2id = 1100+j
-            output_string = team1id+"_"+team2id
-            output.append([output_string, logit])
+            output_string = str(team1id)+"_"+str(team2id)
+            output.append([output_string, p])
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attatchment; filename="all_matchups_Kaggle.csv"'
@@ -127,9 +145,9 @@ def all_probs(request):
         output_row.append(team.name)
     output.append(output_row)
     variables_query = Variable.objects.all().order_by('name')
-    coefficients = []
+    variables = []
     for var in variables_query:
-        coefficients.append(var.coefficient)
+        variables.append(var)
 
     for i in range(0, len(teams)):
         output_row = []
@@ -140,7 +158,7 @@ def all_probs(request):
 
         for j in range(i, len(teams)):
             team2 = teams[j]
-            p = sim_matchup(team1, team2, coefficients)
+            p = sim_matchup(team1, team2, variables)
             output_row.append(p)
         output.append(output_row)
 
@@ -190,9 +208,9 @@ def tournament_probs(request):
             #T3
             #T4
             variables_query = Variable.objects.all().order_by('name')
-            coefficients = []
+            variables = []
             for var in variables_query:
-                coefficients.append(var.coefficient)
+                variables.append(var)
 
             output = []
             header = []
@@ -210,7 +228,7 @@ def tournament_probs(request):
                 row.insert(0, team.name)
                 output.append(row)
 
-            num_iterations = 1
+            num_iterations = 1000
             for i in range(0, num_iterations):
                 eliminated = []
                 for c in range(0, num_teams):
@@ -224,7 +242,7 @@ def tournament_probs(request):
                             while eliminated[y]:
                                 y+=1
 
-                            p = sim_matchup(teams[x], teams[y], coefficients)
+                            p = sim_matchup(teams[x], teams[y], variables)
                             if random.random() < p:
                                 eliminated[y] = True
                                 output[1+x][r] += 1

@@ -8,9 +8,9 @@ class EntryInline(admin.TabularInline):
 
 class VariableAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'coefficient']})]
+        (None, {'fields': ['name', 'coefficient', 'stdev']})]
     inlines = [EntryInline]
-    list_display = ['name', 'coefficient']
+    list_display = ['name', 'coefficient', 'stdev']
     list_filter = ['name']
     search_fields = ['name']
 
