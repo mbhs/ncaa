@@ -1,6 +1,14 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-from .models import Variable, Team, Entry
+from .models import Variable, Team, Entry, Coefficient
+
+class CoefficientAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['value', 'variable','user']})]
+    list_display = ['value', 'variable','user']
+    list_filter = ['value']
+    search_fields = ['value']
 
 class EntryInline(admin.TabularInline):
     model= Entry
@@ -8,9 +16,9 @@ class EntryInline(admin.TabularInline):
 
 class VariableAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'coefficient', 'stdev']})]
+        (None, {'fields': ['name', 'stdev']})]
     inlines = [EntryInline]
-    list_display = ['name', 'coefficient', 'stdev']
+    list_display = ['name', 'stdev']
     list_filter = ['name']
     search_fields = ['name']
 
@@ -25,3 +33,4 @@ class TeamAdmin(admin.ModelAdmin):
 
 admin.site.register(Variable, VariableAdmin)
 admin.site.register(Team, TeamAdmin)
+admin.site.register(Coefficient, CoefficientAdmin)

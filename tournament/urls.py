@@ -14,5 +14,5 @@ urlpatterns = [
     url(r'^all_probs_Kaggle/$', views.all_probs_Kaggle, name='all_probs_Kaggle'),
     url(r'^tournament_probs/$', views.tournament_probs, name='tournament_probs'),
     url(r'^tournament_probs_download/$', views.tournament_probs_download, name='tournament_probs_download'),
-    url(r'^(?P<variable_id>[0-9]+)/$', views.update_coefficient, name='update_coefficient'),
+    url(r'^(?P<coefficient_id>[0-9]+)/$', views.update_coefficient, name='update_coefficient'),
 ]

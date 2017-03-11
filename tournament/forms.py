@@ -1,12 +1,14 @@
 from django import forms
 from django.forms import ModelForm, ValidationError
-from .models import Variable, Entry
+from .models import Variable, Entry, Coefficient
 
+#Form to update a coefficient
 class CoefficientForm(ModelForm):
     class Meta:
-        model = Variable
-        fields = ['coefficient']
+        model = Coefficient
+        fields = ['value']
 
+#Form to upload a csv file
 class UploadForm(forms.Form):
     uploaded_file = forms.FileField(required = True)
 
@@ -15,6 +17,3 @@ class UploadForm(forms.Form):
             raise ValidationError('Either you did not choose a file or the file is not a CSV')
         else:
             return self.cleaned_data
-
-class TeamsForm(forms.Form):
-    data = forms.CharField()

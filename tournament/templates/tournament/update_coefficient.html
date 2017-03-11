@@ -2,9 +2,9 @@
 {% block title %}Update Coefficient{% endblock %}
 {% block content %}
 <br />
-<h2>Update the coefficient for {{variable.name}}:</h2>
+<h2>Update the coefficient for {{coefficient.variable.name}}:</h2>
 <h3>
-<form enctype="multipart/form-data" action="{% url 'tournament:update_coefficient' variable.pk%}" method="post">
+<form enctype="multipart/form-data" action="{% url 'tournament:update_coefficient' coefficient.pk%}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Submit" />
