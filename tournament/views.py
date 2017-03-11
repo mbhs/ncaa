@@ -94,12 +94,14 @@ def read_in_values(request):
                 for entry in entries_query:
                     entries.append(entry.value)
 
+                count = 0
                 #Go through each distinct pair of data points that correspond to a particular variable
                 for i in range(0, len(entries)):
                     for j in range(0, len(entries)):
                         if j <= i:
                             continue
                         differences.append(entries[i]-entries[j])
+                        count += 1
 
                 variable.stdev = numpy.std(differences)
                 variable.mean = numpy.mean(differences)
@@ -322,6 +324,7 @@ def tournament_probs(request):
 
             num_iterations = 1000
             for i in range(0, num_iterations):
+                print i
                 eliminated = [] #In each iteration, keep track of who is still in the tournament
                 for c in range(0, num_teams):
                     eliminated.append(False)
@@ -352,9 +355,9 @@ def tournament_probs(request):
                         break
 
             #Divide the counts by the number of iterations to yield the probabilities
-            for i in range(1, len(output)):
-                for j in range(1, len(row)):
-                    output[i][j] = 1.0*output[i][j]/num_iterations
+            for a in range(1, len(output)):
+                for b in range(1, len(row)):
+                    output[a][b] = 1.0*output[a][b]/num_iterations
 
             request.session['output'] = output
             return HttpResponseRedirect(reverse('tournament:tournament_probs_download'))

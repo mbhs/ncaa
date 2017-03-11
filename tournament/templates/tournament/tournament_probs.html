@@ -26,10 +26,12 @@
 <h2>{{message}}</h2>
 <br />
     <h3>
-<form enctype="multipart/form-data" action="." method="post" target="_blank">
+<form enctype="multipart/form-data" action="." method="post">
     {% csrf_token %}
     {{ form.as_p }}
 <input type="submit" value="Submit" />
+
+<h3> This will take quite some time</h3>
     <br />
 </form>
 </h3>

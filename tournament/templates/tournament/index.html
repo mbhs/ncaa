@@ -21,7 +21,7 @@
 <ul>
   <li><a href = "{%url 'tournament:all_probs' %}" target="_blank">Simulate All Matchups, Nicely Formatted</a></li>
   <li><a href = "{%url 'tournament:all_probs_Kaggle' %}" target="_blank">Simulate All Matchups, Formatted for Kaggle</a></li>
-  <li><a href = "{%url 'tournament:tournament_probs' %}">Simulate Tournament</a></li>
+  <li><a href = "{%url 'tournament:tournament_probs' %}" target="_blank">Simulate Tournament</a></li>
   {%if user.is_superuser%}
   <li><a href = "{%url 'tournament:read_in_values' %}">Update Data File</a></li>
   {%endif%}
