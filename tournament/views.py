@@ -324,7 +324,7 @@ def tournament_probs(request):
 
             num_iterations = 1000
             for i in range(0, num_iterations):
-                print i
+                print(i)
                 eliminated = [] #In each iteration, keep track of who is still in the tournament
                 for c in range(0, num_teams):
                     eliminated.append(False)

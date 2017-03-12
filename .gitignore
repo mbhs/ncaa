@@ -1,0 +1,8 @@
+# Python library and binaries
+env/
+.idea/
+__pycache__
+*.pyc
+
+# Database
+db.sqlite3
