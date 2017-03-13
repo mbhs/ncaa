@@ -66,7 +66,7 @@ def read_in_values(request):
             Team.objects.all().delete()
 
             #Read the uploaded file
-            data_file = request.FILES['uploaded_file']
+            data_file = io.TextIOWrapper(request.FILES['uploaded_file'].file, encoding=request.encoding)
             data_reader = csv.reader(data_file)
             data = list(data_reader)
 
@@ -320,7 +320,7 @@ def tournament_probs(request):
                 output.append(row)
 
 
-            num_iterations = 500
+            num_iterations = 250
             for i in range(0, num_iterations):
                 eliminated = [] #In each iteration, keep track of who is still in the tournament
 
@@ -334,7 +334,7 @@ def tournament_probs(request):
                             y = x+1
                             while eliminated[y]:
                                 y+=1
-                                
+
                             #Choose ALphabetically First Team First (Spread the errors)
                             if teams[x].name < teams[y].name:
                                 p = sim_matchup(teams[x], teams[y], variables, coefficients)
