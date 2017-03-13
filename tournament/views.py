@@ -18,6 +18,7 @@ import csv
 import numpy
 import math
 import random
+import io
 
 #Login page
 def login(request):
@@ -267,7 +268,7 @@ def tournament_probs(request):
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
             #Read and process the input
-            data_file = request.FILES['uploaded_file']
+            data_file = io.TextIOWrapper(request.FILES['uploaded_file'].file, encoding=request.encoding)
             data_reader = csv.reader(data_file)
             data = list(data_reader)
             num_teams = data[0][0]
