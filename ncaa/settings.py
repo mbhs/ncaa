@@ -26,8 +26,10 @@ SECRET_KEY = 'x1=_&!u4p^zh$vn)gp2c%i(1!k4k7pwxks#@1lejgv5#!417m+'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    #'.mbhs.edu',  # Allow domain and subdomains
-    #'.mbhs.edu.',  # Also allow FQDN and subdomains
+    'localhost',
+    '127.0.0.1',
+    '.mbhs.edu',  # Allow domain and subdomains
+    '.mbhs.edu.',  # Also allow FQDN and subdomains
 ]
 
 
