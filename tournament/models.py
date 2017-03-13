@@ -42,6 +42,7 @@ class Coefficient(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length = 50)
+    team_id = models.IntegerField(default = 0)
     def __str__(self):
         return self.name
 

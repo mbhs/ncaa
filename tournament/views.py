@@ -73,6 +73,7 @@ def read_in_values(request):
             #The variables are in the first row of the file
             variables = data[0]
             variables.pop(0)
+            variables.pop(0)
             variable_list = []
 
             #Create variable objects in database
@@ -83,9 +84,9 @@ def read_in_values(request):
 
             #Create team objects and populate data grid with data
             for team_row in data:
-                t = Team.objects.create(name = team_row[0])
-                for i in range(1, len(team_row)):
-                    Entry.objects.create(team = t, variable = variable_list[i-1], value = team_row[i])
+                t = Team.objects.create(name = team_row[0], team_id = team_row[1])
+                for i in range(2, len(team_row)):
+                    Entry.objects.create(team = t, variable = variable_list[i-2], value = team_row[i])
 
             #Compute the standard difference for each variable
             for variable in variable_list:
@@ -156,9 +157,7 @@ def all_probs_Kaggle(request):
         for j in range(i+1, len(teams)):
             team2 = teams[j]
             p = sim_matchup(team1, team2, variables, coefficients) #Determine the probability of team 1 winning
-            team1id = 1100+i #Kaggle Team ID's start at 1100
-            team2id = 1100+j
-            output_string = "2017_"+str(team1id)+"_"+str(team2id)
+            output_string = "2017_"+str(team1.team_id)+"_"+str(team2.team_id)
             output.append([output_string, p])
 
     #Return a csv response
@@ -324,10 +323,10 @@ def tournament_probs(request):
             num_iterations = 500
             for i in range(0, num_iterations):
                 eliminated = [] #In each iteration, keep track of who is still in the tournament
+
                 for c in range(0, num_teams):
                     eliminated.append(False)
-
-                for r in range(1,num_rounds):
+                for r in range(1,num_rounds+1):
                     x = 0
                     while x < num_teams:
                         #Teams will be eliminated from the top of each side of the bracket to the bottom
@@ -335,22 +334,28 @@ def tournament_probs(request):
                             y = x+1
                             while eliminated[y]:
                                 y+=1
-
-                            p = sim_matchup(teams[x], teams[y], variables, coefficients)
-                            if random.random() < p:
-                                eliminated[y] = True
-                                output[1+x][r] += 1
+                                
+                            #Choose ALphabetically First Team First (Spread the errors)
+                            if teams[x].name < teams[y].name:
+                                p = sim_matchup(teams[x], teams[y], variables, coefficients)
+                                if random.random() < p:
+                                    eliminated[y] = True
+                                    output[1+x][r] += 1
+                                else:
+                                    eliminated[x] = True
+                                    output[1+y][r] += 1
                             else:
-                                eliminated[x] = True
-                                output[1+y][r] += 1
+                                p = sim_matchup(teams[y], teams[x], variables, coefficients)
+                                if random.random() < p:
+                                    eliminated[x] = True
+                                    output[1+y][r] += 1
+                                else:
+                                    eliminated[y] = True
+                                    output[1+x][r] += 1
 
                             x = y
-                        x+=1
 
-                for x in range(0, num_teams):
-                    if not eliminated[x]:
-                        output[1+x][num_rounds] += 1
-                        break
+                        x+=1
 
             #Divide the counts by the number of iterations to yield the probabilities
             for a in range(1, len(output)):

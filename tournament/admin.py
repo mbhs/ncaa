@@ -24,9 +24,9 @@ class VariableAdmin(admin.ModelAdmin):
 
 class TeamAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name']})]
+        (None, {'fields': ['name','team_id']})]
     inlines = [EntryInline]
-    list_display = ['name']
+    list_display = ['name','team_id']
     list_filter = ['name']
     search_fields = ['name']
 
