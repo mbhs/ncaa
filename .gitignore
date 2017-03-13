@@ -3,6 +3,7 @@ env/
 .idea/
 __pycache__
 *.pyc
+static/
 
 # Database
 db.sqlite3
