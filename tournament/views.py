@@ -157,7 +157,7 @@ def all_probs_Kaggle(request):
             p = sim_matchup(team1, team2, variables, coefficients) #Determine the probability of team 1 winning
             team1id = 1100+i #Kaggle Team ID's start at 1100
             team2id = 1100+j
-            output_string = str(team1id)+"_"+str(team2id)
+            output_string = "2017_"+str(team1id)+"_"+str(team2id)
             output.append([output_string, p])
 
     #Return a csv response
@@ -215,16 +215,14 @@ def all_probs(request):
         output_row.append(team1.name)
         for k in range(0, i):
             output_row.append("")
-
-        for j in range(i, len(teams)):
+        output_row.append("-")
+        for j in range(i+1, len(teams)):
             team2 = teams[j]
             p = sim_matchup(team1, team2, variables, coefficients)
             output_row.append(p)
         output.append(output_row)
 
-    for i in range(1, len(output)):
-        for j in range(i+1, len(output)):
-            output[j][i] = output[i][j]
+
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attatchment; filename="all_matchups.csv"'
@@ -322,9 +320,8 @@ def tournament_probs(request):
                 output.append(row)
 
 
-            num_iterations = 1000
+            num_iterations = 500
             for i in range(0, num_iterations):
-                print i
                 eliminated = [] #In each iteration, keep track of who is still in the tournament
                 for c in range(0, num_teams):
                     eliminated.append(False)

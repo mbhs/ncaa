@@ -26,7 +26,7 @@
 <h2>{{message}}</h2>
 <br />
     <h3>
-<form enctype="multipart/form-data" action="." method="post">
+<form enctype="multipart/form-data" action="." method="post" target = "blank">
     {% csrf_token %}
     {{ form.as_p }}
 <input type="submit" value="Submit" />
