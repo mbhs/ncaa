@@ -132,7 +132,7 @@ def update_coefficient(request, coefficient_id):
 #Simulate All Probabilities for the Kaggle tournament
 @login_required
 def all_probs_Kaggle(request):
-    teams_query = Team.objects.all().order_by('name') #Get an alphabetical listing of teams
+    teams_query = Team.objects.all().order_by('team_id') #Get an alphabetical listing of teams
 
     #Convert query into a list
     teams = []
@@ -152,6 +152,7 @@ def all_probs_Kaggle(request):
         coefficients.append(coef)
 
     output = []
+    output.append(['id','pred'])
     for i in range(0, len(teams)):
         team1 = teams[i] #Select a team and then go through all teams alphabetically above it
         for j in range(i+1, len(teams)):
