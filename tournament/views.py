@@ -157,7 +157,7 @@ def all_probs_Kaggle(request):
         team1 = teams[i] #Select a team and then go through all teams alphabetically above it
         for j in range(i+1, len(teams)):
             team2 = teams[j]
-            p = sim_matchup(team1, team2, variables, coefficients) #Determine the probability of team 1 winning
+            p = sim_matchup(team1, team2, variables, coefficients) #Determine the probability of team 1 winning (sim_matchup is in the functions.py file)
             output_string = "2017_"+str(team1.team_id)+"_"+str(team2.team_id)
             output.append([output_string, p])
 
@@ -176,9 +176,9 @@ Output Format:
 
         Team 1  Team 2  Team 3  Team 4 ...
 Team 1    p11     p12     p13     p14 ...
-Team 2    p21     ...
-Team 3                    ...
-Team 4                           ...
+Team 2    ...     ...
+Team 3    ...     ...     ...
+Team 4    ...     ...     ...     ...
 ...
 
 '''
@@ -336,7 +336,7 @@ def tournament_probs(request):
                             while eliminated[y]:
                                 y+=1
 
-                            #Choose ALphabetically First Team First (Spread the errors)
+                            #Choose Alphabetically First Team to be Team 1 (Spread the errors)
                             if teams[x].name < teams[y].name:
                                 p = sim_matchup(teams[x], teams[y], variables, coefficients)
                                 if random.random() < p:
