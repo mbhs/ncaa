@@ -17,6 +17,13 @@ Every user has unique STANDARDIZED coefficients for each variable; thus, the coe
 
 '''
 
+'''
+Procedure:
+First Upload the Master Spreadsheet (whoever the admin is can do this)
+Create login/passwords for each MBHS team
+Allow individual teams to adjust their coefficient values and obtain results
+'''
+
 #The variables available to all teams (i.e. the column headers in the csv sheet)
 class Variable(models.Model):
     name = models.CharField(max_length = 50)
