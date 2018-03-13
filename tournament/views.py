@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import get_object_or_404, render, render_to_response
+from django.shortcuts import get_object_or_404, render, render_to_response, redirect
 from django.http import HttpResponseRedirect, HttpResponse
-from django.urls import reverse
 from django.views import generic
 from django import forms
 from django.contrib.auth.decorators import login_required
@@ -19,6 +18,7 @@ import numpy
 import math
 import random
 import io
+import datetime
 
 #Login page
 def login(request):
@@ -27,7 +27,7 @@ def login(request):
         user = authenticate(username = request.POST.get('username'), password = request.POST.get('password'))
         if user is not None:
             auth_login(request, user)
-            return HttpResponseRedirect(reverse('tournament:index'))
+            return redirect('tournament:index')
         else:
             message = "Incorrect Username-Password Combination"
 
@@ -40,7 +40,7 @@ def index(request):
     if not variables:
         #If no variables are in the database, then redirect to a page to upload a master data file.
         #This will only be done once and the master data file will be updated only by superusers
-        return HttpResponseRedirect(reverse('tournament:read_in_values'))
+        return redirect('tournament:read_in_values')
 
     coefficients = Coefficient.objects.filter(user = request.user).order_by('variable__pk') #Get a list of all coefficients for the user
     if not coefficients:
@@ -99,9 +99,7 @@ def read_in_values(request):
                 count = 0
                 #Go through each distinct pair of data points that correspond to a particular variable
                 for i in range(0, len(entries)):
-                    for j in range(0, len(entries)):
-                        if j <= i:
-                            continue
+                    for j in range(i+1, len(entries)):
                         differences.append(entries[i]-entries[j])
                         count += 1
 
@@ -109,11 +107,11 @@ def read_in_values(request):
                 variable.mean = numpy.mean(differences)
                 variable.save()
 
-            return HttpResponseRedirect(reverse('tournament:index'))
+            return redirect('tournament:index')
 
     else:
         form = UploadForm()
-    return render(request, 'tournament/upload_csv.html', {'form': form, })
+    return render(request, 'tournament/upload_csv.html', {'form': form})
 
 #Update a coefficient
 @login_required
@@ -123,7 +121,7 @@ def update_coefficient(request, coefficient_id):
         form = CoefficientForm(request.POST, instance = coefficient)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('tournament:index'))
+            return redirect('tournament:index')
     else:
         form = CoefficientForm(instance = coefficient)
 
@@ -364,7 +362,7 @@ def tournament_probs(request):
                     output[a][b] = 1.0*output[a][b]/num_iterations
 
             request.session['output'] = output
-            return HttpResponseRedirect(reverse('tournament:tournament_probs_download'))
+            return redirect('tournament:tournament_probs_download')
 
     else:
         form = UploadForm()
@@ -386,4 +384,4 @@ def tournament_probs_download(request):
 @login_required
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse('tournament:index'))
+    return redirect('tournament:index')
