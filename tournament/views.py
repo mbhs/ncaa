@@ -158,7 +158,7 @@ def all_probs_Kaggle(request):
         for j in range(i+1, len(teams)):
             team2 = teams[j]
             p = sim_matchup(team1, team2, variables, coefficients) #Determine the probability of team 1 winning (sim_matchup is in the functions.py file)
-            output_string = "2017_"+str(team1.team_id)+"_"+str(team2.team_id)
+            output_string = str(datetime.datetime.now().year)+"_"+str(team1.team_id)+"_"+str(team2.team_id)
             output.append([output_string, p])
 
     #Return a csv response
