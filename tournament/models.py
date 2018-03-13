@@ -38,8 +38,8 @@ class Variable(models.Model):
 #The STANDARDIZED coefficients for each user
 class Coefficient(models.Model):
     value = models.FloatField(default = 0) #coefficient value
-    variable = models.ForeignKey(Variable)
-    user = models.ForeignKey(User)
+    variable = models.ForeignKey(Variable,on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     def __str__(self):
         return str(self.value)
 
@@ -59,8 +59,8 @@ class Team(models.Model):
 #The data points corresponding to a team and variable (i.e. the spreadsheet values)
 class Entry(models.Model):
     value = models.FloatField(default = 0)
-    team = models.ForeignKey(Team)
-    variable = models.ForeignKey(Variable)
+    team = models.ForeignKey(Team,on_delete=models.CASCADE)
+    variable = models.ForeignKey(Variable,on_delete=models.CASCADE)
     class Meta:
         verbose_name_plural = "Entries"
     def __str__(self):
