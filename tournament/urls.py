@@ -3,6 +3,8 @@ from django.contrib.auth.views import password_change, password_change_done
 
 from . import views
 
+app_name = "tournament"
+
 urlpatterns = [
     url(r'^accounts/password/change/$', password_change, {'post_change_redirect' : '/accounts/password/change/done/'},name="password_change"),
     url(r'^accounts/password/change/done/$',password_change_done),
