@@ -68,3 +68,9 @@ class Entry(models.Model):
 
     def __unicode__(self):
         return ""+self.team.name+", "+self.variable.name+"," +str(self.value)
+
+#Stores the teams in order and round info needed for round by round probabilities
+class Bracket(models.Model):
+
+    all_teams = models.TextField(null=True)
+    rounds = models.TextField(null=True)

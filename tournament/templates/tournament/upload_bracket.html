@@ -1,0 +1,63 @@
+{% extends "tournament/base.html" %}
+{% block title %}Upload Data{% endblock %}
+{% block content %}
+<br />
+<h2>Upload the bracket csv file as follows: </h2>
+  <h3>The format is as follows:</h3>
+
+<table>
+  <tr>
+    <th> 64 </th>
+    <th> 32 </th>
+    <th> 16 </th>
+    <th> 8 </th>
+    <th> 4 </th>
+    <th> 2 </th>
+    <th>  Winner </th>
+  </tr>
+  <tr>
+    <td>Team 1</td>
+    <td>Team 1</td>
+    <td>Team 1</td>
+    <td>Team 1</td>
+    <td>Team 1</td>
+    <td>Team 1</td>
+    <td>Team 1</td>
+  </tr>
+  <tr>
+    <td>Team 2</td>
+    <td>Team 2</td>
+    <td>Team 2</td>
+    <td>Team 2</td>
+    <td>Team 2</td>
+    <td>Team 2</td>
+    <td></td>
+  </tr>
+    <tr>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Team 64</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+<h3>
+<form enctype="multipart/form-data" action="{% url 'tournament:update_bracket' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+    <br />
+</form>
+</h3>
+{%endblock%}

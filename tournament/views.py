@@ -9,9 +9,9 @@ from django.template import RequestContext
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login as auth_login
 
-from .models import Variable, Team, Entry, Coefficient
+from .models import Variable, Team, Entry, Coefficient, Bracket
 from .forms import CoefficientForm, UploadForm
-from .functions import sim_matchup, is_power2
+from .functions import sim_matchup, is_power2, result, reduce
 
 import csv
 import numpy
@@ -19,6 +19,7 @@ import math
 import random
 import io
 import datetime
+import json
 
 #Login page
 def login(request):
@@ -41,6 +42,11 @@ def index(request):
         #If no variables are in the database, then redirect to a page to upload a master data file.
         #This will only be done once and the master data file will be updated only by superusers
         return redirect('tournament:read_in_values')
+
+    bracket = Bracket.objects.first()
+    if not bracket:
+        # Need bracket ordering file to generate round by round probabilities
+        return redirect('tournament:update_bracket')
 
     coefficients = Coefficient.objects.filter(user = request.user).order_by('variable__pk') #Get a list of all coefficients for the user
     if not coefficients:
@@ -113,6 +119,43 @@ def read_in_values(request):
         form = UploadForm()
     return render(request, 'tournament/upload_csv.html', {'form': form})
 
+@login_required
+def update_bracket(request):
+    if request.method == 'POST':
+        form = UploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            #Delete All Current Data
+            Bracket.objects.all().delete()
+
+
+            #Read the uploaded file
+            data_file = io.TextIOWrapper(request.FILES['uploaded_file'].file, encoding=request.encoding)
+            data_reader = csv.reader(data_file)
+            data = list(data_reader)[1:]
+            for i in range(len(data)):
+                for j in range(7 - len(data[i])):
+                    data[i].append('*')
+            flip = [list(i) for i in zip(*data)]
+            bracket = Bracket.objects.create()
+
+            bracket.all_teams = json.dumps(flip[0])
+            round_winners = flip[1:]
+            round_out = []
+            for i in range(6):
+                row = round_winners[i][0:2**(5-i)-1]
+                if "*" in row:
+                    round_out.append([])
+                else:
+                    round_out.append(row)
+            bracket.rounds = json.dumps(round_out)
+            bracket.save()
+
+            return redirect('tournament:index')
+
+    else:
+        form = UploadForm()
+    return render(request, 'tournament/upload_bracket.html', {'form': form})
+
 #Update a coefficient
 @login_required
 def update_coefficient(request, coefficient_id):
@@ -172,16 +215,16 @@ def all_probs_Kaggle(request):
 '''
 Output Format:
 
-        Team 1  Team 2  Team 3  Team 4 ...
-Team 1    p11     p12     p13     p14 ...
-Team 2    ...     ...
-Team 3    ...     ...     ...
-Team 4    ...     ...     ...     ...
+        Team 1  Team 2  Team 3  Team 4  ...
+Team 1    ...     p12     p13     p14   ...
+Team 2    ...     ...     p23     p24   ...
+Team 3    ...     ...     ...     p34   ...
+Team 4    ...     ...     ...     ...   ...
 ...
 
 '''
 @login_required
-def all_probs(request):
+def all_probs(request, mode):
     teams_query = Team.objects.all().order_by('name')
     teams = []
 
@@ -221,18 +264,53 @@ def all_probs(request):
             output_row.append(p)
         output.append(output_row)
 
+    if mode == "grid":
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attatchment; filename="all_matchups.csv"'
+        writer=csv.writer(response)
+        for row in output:
+            writer.writerow(row)
+
+        return response
+
+    if mode == "bracket":
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attatchment; filename="round_probabilities.csv"'
+        writer=csv.writer(response, delimiter=',')
+
+        bracket = Bracket.objects.first()
+        #top = ["Virginia", "UMBC","Creighton", "Kansas St","Kentucky","Davidson","Arizona","Buffalo","Miami (Fla)","Loyola Chicago","Tennesee","Wright St","Nevada","Texas","Cincinnati","Georgia St","Xavier","TX Southern","Missouri","Florida St","Ohio State","S Dakota St","Gonzaga","UNC Greensboro","Houston","San Diego St","Michigan","Montana","Texas A&M","Providence","North Carolina","Lipscomb","VIllanova","Radford","Virginia Tech","Alabama","West Virginia","Murray St","Wichita St","Marshall","Florida","St. Bonaventure","Texas Tech","SF Austin","Arkansas","Butler","Purdue","CS Fullerton","Kansas","Penn","Seton Hall","NC State","Clemson","New Mexico St","Auburn","Coll Charleston","TCU","Syracuse","MIchigan State","Bucknell","Rhode Island","Oklahoma","Duke","Iona"]
+        #rounds = [[],[],[],[],[],[],[]]
+        top = json.loads(bracket.all_teams)
+        rounds = json.loads(bracket.rounds)
+        mini = [[0] for i in top]
+
+        for i in range(0, len(top), 2):
+            val = result(top[i], top[i+1], output)
+            if top[i] in rounds[0]:
+                val = 1
+            elif top[i+1] in rounds[0]:
+                val = 0
+            mini[i][0] = val
+            mini[i+1][0] = 1 - val
+
+        mini = reduce(top , mini, output, rounds)
+        writer.writerow(['Chance of Reaching Round','32','16','8','4','2','WIN'])
+
+        order = list(range(len(mini)))
+        order.sort(key=lambda x: mini[x][-1], reverse=True)
+
+        for i in range(len(mini)):
+            writer.writerow([top[order[i]]] + list(map(str, mini[order[i]])))
+
+        return response
+
+    else:
+        return redirect('tournament:index')
 
 
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attatchment; filename="all_matchups.csv"'
-    writer=csv.writer(response)
-    for row in output:
-        writer.writerow(row)
-
-    return response
-
-
-#Simulate the tournament
+#Simulate the tournament - Replaced by bracket mode of all_probs
 '''
 Suppose that we are currently in the round of 32, with teams 1-16 in the east/midwest, and 17-32 in the south/west.
 
