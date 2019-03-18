@@ -53,6 +53,8 @@ def result(a,b,k):
         return float(k[a][b])
 
 def reduce(teams, mini,k, rounds):
+    if k[0] == '':
+        k = k[1:]
     for stage in range(1,6):
         r = list(range(0,len(teams),2**stage))
         for n,i in enumerate(r):
