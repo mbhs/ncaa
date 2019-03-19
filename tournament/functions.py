@@ -28,10 +28,10 @@ def sim_matchup(team1, team2, variables, coefficients):
     parameter = numpy.dot(coefficients_vec, x_vec) #Compute the logit parameter
 
     #To prevent overflow
-    if parameter > 10:
+    if parameter > 6.91:
         return .999
 
-    if parameter < -10:
+    if parameter < -6.91:
         return 0.001
 
     #Compute probability
@@ -53,8 +53,6 @@ def result(a,b,k):
         return float(k[a][b])
 
 def reduce(teams, mini,k, rounds):
-    if k[0] == '':
-        k = k[1:]
     for stage in range(1,6):
         r = list(range(0,len(teams),2**stage))
         for n,i in enumerate(r):
