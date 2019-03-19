@@ -22,7 +22,7 @@ def sim_matchup(team1, team2, variables, coefficients):
     #Get the coefficients for the given user
     coefficients_vec = []
     for i in range(0, len(variables)):
-        x_vec[i] = (x_vec[i]-variables[i].mean)/variables[i].stdev #Standardize the differences
+        #x_vec[i] = (x_vec[i]-variables[i].mean)/variables[i].stdev #Standardize the differences
         coefficients_vec.append(coefficients[i].value) #Develop the vector of user coefficients
 
     parameter = numpy.dot(coefficients_vec, x_vec) #Compute the logit parameter
